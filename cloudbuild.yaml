@@ -1,0 +1,60 @@
+steps:
+  - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
+    id: "Clone repo"
+    entrypoint: "bash"
+    args:
+      - "-eEuo"
+      - "pipefail"
+      - "-c"
+      - |-
+        #!/bin/bash
+        source git-clone-and-checkout.sh
+        cloneAndCheckoutBranch "$_GIT_CLONE_URL" "$_GIT_REPOSITORY_NAME" "$_GIT_REF" "$_GIT_HEAD_SHA"
+
+  - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
+    id: "Run tests"
+    entrypoint: "bash"
+    dir: "${_GIT_REPOSITORY_NAME}"
+    args:
+      - "-eEuo"
+      - "pipefail"
+      - "-c"
+      - |-
+        #!/bin/bash
+        source run-dockerfile-tests.sh
+        runDockerfileTests "$_REPLY_TOPIC"
+
+  - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
+    id: "Create artifact registry repository"
+    entrypoint: "bash"
+    dir: "${_GIT_REPOSITORY_NAME}"
+    args:
+      - "-eEuo"
+      - "pipefail"
+      - "-c"
+      - |-
+        #!/bin/bash
+        source create-artifact-registry.sh
+        createArtifactRegistry "$_REPLY_TOPIC"
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "Build and push docker image"
+    entrypoint: "bash"
+    args:
+      - "-eEuo"
+      - "pipefail"
+      - "-c"
+      - |-
+        #!/bin/bash
+        source build-and-push-docker.sh
+        buildAndPushDocker "$_REPLY_TOPIC" "$PROJECT_ID"
+    env:
+      - "PROJECT_ID=$PROJECT_ID"
+options:
+  substitutionOption: "ALLOW_LOOSE"
+substitutions:
+  _GIT_CLONE_URL: $(body.message.data.git.clone_url)
+  _GIT_REPOSITORY_NAME: $(body.message.data.git.name)
+  _GIT_REF: $(body.message.data.git.ref)
+  _GIT_HEAD_SHA: $(body.message.data.git.head_sha)
+  _REPLY_TOPIC: $(body.message.data.reply_topic)
