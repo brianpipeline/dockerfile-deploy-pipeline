@@ -37,7 +37,7 @@ steps:
         source create-artifact-registry.sh
         createArtifactRegistry "$_REPLY_TOPIC"
 
-  - name: "gcr.io/cloud-builders/docker"
+  - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
     id: "Build and push docker image"
     entrypoint: "bash"
     args:
