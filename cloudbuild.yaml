@@ -51,6 +51,18 @@ steps:
         buildAndPushDocker "$_REPLY_TOPIC" "$PROJECT_ID"
     env:
       - "PROJECT_ID=$PROJECT_ID"
+
+  - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
+    id: "Reply back to pipeline"
+    entrypoint: "bash"
+    args:
+      - "-eEuo"
+      - "pipefail"
+      - "-c"
+      - |-
+        #!/bin/bash
+        source send-message.sh
+        sendMessage "$_REPLY_TOPIC" "Pipeline succeeded."
 options:
   substitutionOption: "ALLOW_LOOSE"
 substitutions:
