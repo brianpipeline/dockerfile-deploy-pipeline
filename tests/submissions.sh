@@ -16,7 +16,9 @@ gcloud builds submit . --config cloudbuild.yaml --substitutions "_GIT_CLONE_URL=
 message=$(gcloud pubsub subscriptions pull --auto-ack "$subscriptionName" --format='value(message.data)' 2>/dev/null)
 gcloud pubsub topics delete "$topicName"
 gcloud pubsub subscriptions delete "$subscriptionName"
-if [[ $message == "Pipeline succeeded." ]]; then
+echo "$message"
+echo "^ the message"
+if [[ "$message" == "Pipeline succeeded." ]]; then
     echo "Received Message: $message"
 else
     exit 1
