@@ -48,7 +48,7 @@ steps:
       - |-
         #!/bin/bash
         source build-and-push-docker.sh
-        buildAndPushDocker "$_REPLY_TOPIC" "$PROJECT_ID"
+        buildAndPushDocker "$_REPLY_TOPIC" "$PROJECT_ID" "$_GIT_REF"
     env:
       - "PROJECT_ID=$PROJECT_ID"
 
