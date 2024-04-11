@@ -40,6 +40,7 @@ steps:
   - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:0.1"
     id: "Build and push docker image"
     entrypoint: "bash"
+    dir: "${_GIT_REPOSITORY_NAME}"
     args:
       - "-eEuo"
       - "pipefail"
