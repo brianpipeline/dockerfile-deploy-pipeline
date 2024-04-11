@@ -35,7 +35,7 @@ steps:
       - |-
         #!/bin/bash
         source create-artifact-registry.sh
-        createArtifactRegistry "$_REPLY_TOPIC"
+        createArtifactRegistry "$_REPLY_TOPIC" "$_GIT_REF"
 
   - name: "us-central1-docker.pkg.dev/cloud-build-pipeline-396819/cloud-build-helper-docker/cloud-build-helper-docker:latest"
     id: "Build and push docker image"
